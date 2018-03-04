@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Location Test 1</string>
+    <string-array name="location_types_array">
+        <item>Balanced Power</item>
+        <item>High Accuracy</item>
+        <item>Low Power</item>
+        <item>No Power</item>
+    </string-array>
+</resources>
