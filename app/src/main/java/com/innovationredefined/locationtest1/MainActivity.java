@@ -30,8 +30,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    String spinnerItem;
+public class MainActivity extends AppCompatActivity{
     private LocationRequest mLocationRequest;
     private int LOCATION_PRIORITY;
     private long UPDATE_INTERVAL = 5 * 1000;  /* 10 secs */
@@ -41,50 +40,76 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private double latitude;
     private double longitude;
 
-    TextView textViewLatitude;
-    TextView textViewLongitude;
+    TextView textViewLatitudeNoPower;
+    TextView textViewLongitudeNoPower;
+    TextView textViewLatitudeLowPower;
+    TextView textViewLongitudeLowPower;
+    TextView textViewLatitudeBalancedPower;
+    TextView textViewLongitudeBalancedPower;
+    TextView textViewLatitudeHighAccuracy;
+    TextView textViewLongitudeHighAccuracy;
 
     boolean hasLocationPremission;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button buttonGetLocation = findViewById(R.id.button_get_location);
-        textViewLatitude = findViewById(R.id.textView_latitude);
-        textViewLongitude = findViewById(R.id.textView_longitude);
 
-        Spinner spinnerLocationType = findViewById(R.id.spinner_location_type);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.location_types_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinnerLocationType.setAdapter(adapter);
-        spinnerLocationType.setOnItemSelectedListener(this);
+        Button buttonGetNoPowerLocation = findViewById(R.id.button_no_power);
+        textViewLatitudeNoPower = findViewById(R.id.textView_latitude_no_power);
+        textViewLongitudeNoPower = findViewById(R.id.textView_longitude_no_power);
 
-        buttonGetLocation.setOnClickListener(new View.OnClickListener() {
+        Button buttonGetLowPowerLocation = findViewById(R.id.button_low_power);
+        textViewLatitudeLowPower = findViewById(R.id.textView_latitude_low_power);
+        textViewLongitudeLowPower = findViewById(R.id.textView_longitude_low_power);
+
+        Button buttonGetBalancedPowerLocation = findViewById(R.id.button_balanced_power);
+        textViewLatitudeBalancedPower = findViewById(R.id.textView_latitude_balanced_power);
+        textViewLongitudeBalancedPower = findViewById(R.id.textView_longitude_balanced_power);
+
+        Button buttonGetHighAccuracyLocation = findViewById(R.id.button_high_accuracy);
+        textViewLatitudeHighAccuracy = findViewById(R.id.textView_latitude_high_accuracy);
+        textViewLongitudeHighAccuracy = findViewById(R.id.textView_longitude_high_accuracy);
+
+        buttonGetNoPowerLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (spinnerItem) {
-                    case "Balanced Power":
-                        LOCATION_PRIORITY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
-                        break;
-                    case "High Accuracy":
-                        LOCATION_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY;
-                        break;
-                    case "Low Power":
-                        LOCATION_PRIORITY = LocationRequest.PRIORITY_LOW_POWER;
-                        break;
-                    case "No Power":
-                        LOCATION_PRIORITY = LocationRequest.PRIORITY_NO_POWER;
-                        break;
-                }
+                LOCATION_PRIORITY = LocationRequest.PRIORITY_NO_POWER;
                 requestPermissions();
-                displayNewLocation();
+                displayNewLocation(textViewLatitudeNoPower,textViewLongitudeNoPower,"No Power");
+            }
+        });
+
+        buttonGetLowPowerLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LOCATION_PRIORITY = LocationRequest.PRIORITY_LOW_POWER;
+                requestPermissions();
+                displayNewLocation(textViewLatitudeLowPower,textViewLongitudeLowPower,"Low Power");
+            }
+        });
+
+        buttonGetBalancedPowerLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LOCATION_PRIORITY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+                requestPermissions();
+                displayNewLocation(textViewLatitudeBalancedPower,textViewLongitudeBalancedPower,"Balanced Power");
+            }
+        });
+
+        buttonGetHighAccuracyLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LOCATION_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY;
+                requestPermissions();
+                displayNewLocation(textViewLatitudeHighAccuracy,textViewLongitudeHighAccuracy,"High Accuracy");
             }
         });
     }
+
+
+
 
     // Trigger new location updates at interval
     protected void startLocationUpdates() {
@@ -219,20 +244,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    private void displayNewLocation() {
+    private void displayNewLocation(TextView textViewLatitude, TextView textViewLongitude, String type) {
         startLocationUpdates();
         textViewLatitude.setText(String.valueOf(latitude));
         textViewLongitude.setText(String.valueOf(longitude));
-        Toast.makeText(getBaseContext(), "Updating location", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getBaseContext(), "Updating location "+type, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        spinnerItem = parent.getItemAtPosition(position).toString();
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
 }
